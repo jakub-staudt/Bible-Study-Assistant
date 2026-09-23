@@ -1,6 +1,7 @@
-import { CONFIG } from '../config.js';
-import { renderChapter } from './bible.js';
+import { renderChapter, loadFootnotes, getChapterCount } from './bible.js';
 import { initNav, renderChapterGrid, BOOKS } from './nav.js';
+import { showStudyPanel, initTabs } from './ui.js';
+import { loadXRefs, loadCccRefs } from './refs.js';
 
 // ── Global state ─────────────────────────────────────────
 export const state = {
@@ -9,13 +10,12 @@ export const state = {
   bookName:        'John',
   selectedVerseId:  null,
   selectedVerseText: '',
-  langMode:         localStorage.getItem('langMode') || 'side-by-side',
   activeTab:        'footnotes',
   mapInitialised:   false,
 };
 
 // ── Navigation ───────────────────────────────────────────
-// Fetch and render a chapter in both EN and PL columns.
+// Fetch and render a chapter into the English text column.
 export async function navigate(bookId, chapterNum) {
   state.book    = bookId;
   state.chapter = chapterNum;
@@ -31,7 +31,7 @@ export async function navigate(bookId, chapterNum) {
     b.classList.toggle('active', b.dataset.book === bookId)
   );
 
-  // Update chapter grid — fetch chapter count from API
+  // Update chapter grid
   await updateChapterGrid(bookId);
 
   // Update chapter button highlight
@@ -39,24 +39,18 @@ export async function navigate(bookId, chapterNum) {
     b.classList.toggle('active', parseInt(b.dataset.chapter) === chapterNum)
   );
 
-  // Render English text
   const enContainer = document.getElementById('textEn')?.querySelector('.text-col__content');
+
   if (enContainer) {
-    await renderChapter(CONFIG.BIBLE_ID_EN, bookId, chapterNum, enContainer);
+    await renderChapter(bookId, chapterNum, enContainer);
   }
 
-  // Attach verse click handlers
   attachVerseHandlers();
 }
 
 async function updateChapterGrid(bookId) {
   try {
-    const res = await fetch(
-      `https://api.scripture.api.bible/v1/bibles/${CONFIG.BIBLE_ID_EN}/books/${bookId}/chapters`,
-      { headers: { 'api-key': CONFIG.BIBLE_API_KEY } }
-    );
-    const data = await res.json();
-    const count = (data.data || []).filter(c => c.id !== `${bookId}.intro`).length;
+    const count = await getChapterCount(bookId);
     renderChapterGrid(count);
   } catch {
     renderChapterGrid(30); // fallback
@@ -73,36 +67,28 @@ function attachVerseHandlers() {
 export function selectVerse(verseId) {
   if (!verseId) return;
   state.selectedVerseId = verseId;
+
+  // Highlight the selected verse
   document.querySelectorAll('.verse').forEach(v =>
     v.classList.toggle('selected', v.dataset.verseId === verseId)
   );
-  // Study panel updates added in Patch 04
-  console.log('Selected verse:', verseId);
-}
 
-// ── Language toggle ───────────────────────────────────────
-const LANG_MODES = ['side-by-side', 'en', 'pl'];
-const LANG_LABELS = { 'side-by-side': 'EN | PL', 'en': 'EN', 'pl': 'PL' };
+  // Build human-readable label e.g. "John 1:1"
+  const [book, ch, v] = verseId.split('.');
+  const allBooks = [...BOOKS.OT, ...BOOKS.NT];
+  const bookName = allBooks.find(b => b.id === book)?.name || book;
+  const label = `${bookName} ${ch}:${v}`;
 
-function applyLangMode(mode) {
-  state.langMode = mode;
-  localStorage.setItem('langMode', mode);
-  document.getElementById('textEn')?.style.setProperty('display',
-    mode === 'pl' ? 'none' : 'block');
-  document.getElementById('textPl')?.style.setProperty('display',
-    mode === 'en' ? 'none' : 'block');
-  const btn = document.getElementById('langToggle');
-  if (btn) btn.textContent = LANG_LABELS[mode];
+  showStudyPanel(label);
+  loadFootnotes(verseId);
+  loadXRefs(verseId);
+  loadCccRefs(verseId);
 }
 
 // ── Initialise ────────────────────────────────────────────
 async function init() {
   initNav();
-  applyLangMode(state.langMode);
-  document.getElementById('langToggle')?.addEventListener('click', () => {
-    const idx = LANG_MODES.indexOf(state.langMode);
-    applyLangMode(LANG_MODES[(idx + 1) % LANG_MODES.length]);
-  });
+  initTabs();
   await navigate('JHN', 1); // Load John 1 on first open
 }
 

@@ -8,7 +8,6 @@
   --color-accent:       #8b1a1a;
   --color-accent-hover: #6b1515;
   --color-highlight:    #fff3cd;
-  --color-pl-bg:        #f0f4ff;
 
   --font-serif: "EB Garamond", "Palatino Linotype", Georgia, serif;
   --font-sans:  system-ui, -apple-system, sans-serif;
@@ -163,10 +162,6 @@ body {
 .text-col--en {
   background: var(--color-surface);
   border-bottom: 2px solid var(--color-border);
-}
-
-.text-col--pl {
-  background: var(--color-pl-bg);
 }
 
 .text-col__lang-label {
@@ -374,4 +369,36 @@ body {
   padding: 0.75rem 1rem;
   color: #7b1111;
   font-size: 0.87rem;
+}
+
+/* Footnote entries */
+
+.fn-entry {
+  display: flex;
+  gap: 0.6rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--color-border);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+.fn-entry:last-of-type { border-bottom: none; }
+
+.fn-entry__marker {
+  flex-shrink: 0;
+  font-weight: 700;
+  color: var(--color-accent);
+  font-size: 0.8rem;
+  padding-top: 0.1rem;
+  min-width: 1.5rem;
+}
+
+.fn-entry__text {
+  color: var(--color-text);
+}
+
+.fn-usccb-link {
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--color-border);
+  font-size: 0.85rem;
 }
