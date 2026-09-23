@@ -227,6 +227,25 @@ body {
   font-style: italic;
 }
 
+/* Make the bible panel display side-by-side in side-by-side mode */
+.bible-panel.mode-side-by-side {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr;
+}
+
+.bible-panel.mode-side-by-side .text-col {
+  overflow-y: auto;
+  height: 100%;
+  border-right: 1px solid var(--color-border);
+  border-bottom: none;
+}
+
+.bible-panel.mode-en .text-col--pl,
+.bible-panel.mode-pl .text-col--en {
+  display: none;
+}
+
 /* Study panel */
 
 .study-panel {

@@ -12,6 +12,7 @@ export const state = {
   langMode:         localStorage.getItem('langMode') || 'side-by-side',
   activeTab:        'footnotes',
   mapInitialised:   false,
+  plAvailable:      CONFIG.BIBLE_ID_PL !== '',
 };
 
 // ── Navigation ───────────────────────────────────────────
@@ -39,13 +40,25 @@ export async function navigate(bookId, chapterNum) {
     b.classList.toggle('active', parseInt(b.dataset.chapter) === chapterNum)
   );
 
-  // Render English text
   const enContainer = document.getElementById('textEn')?.querySelector('.text-col__content');
+  const plContainer = document.getElementById('textPl')?.querySelector('.text-col__content');
+
+  const tasks = [];
+
   if (enContainer) {
-    await renderChapter(CONFIG.BIBLE_ID_EN, bookId, chapterNum, enContainer);
+    tasks.push(renderChapter(CONFIG.BIBLE_ID_EN, bookId, chapterNum, enContainer));
   }
 
-  // Attach verse click handlers
+  if (plContainer && CONFIG.BIBLE_ID_PL) {
+    tasks.push(renderChapter(CONFIG.BIBLE_ID_PL, bookId, chapterNum, plContainer));
+  } else if (plContainer) {
+    plContainer.innerHTML = `<p class="placeholder-msg">
+      Biblia Tysiąclecia nie jest dostępna w tym planie API.<br>
+      <a href="https://biblia.deon.pl" target="_blank" class="ref-link">Otwórz biblia.deon.pl ↗</a>
+    </p>`;
+  }
+
+  await Promise.all(tasks); // Both load at the same time
   attachVerseHandlers();
 }
 
@@ -87,18 +100,42 @@ const LANG_LABELS = { 'side-by-side': 'EN | PL', 'en': 'EN', 'pl': 'PL' };
 function applyLangMode(mode) {
   state.langMode = mode;
   localStorage.setItem('langMode', mode);
-  document.getElementById('textEn')?.style.setProperty('display',
-    mode === 'pl' ? 'none' : 'block');
-  document.getElementById('textPl')?.style.setProperty('display',
-    mode === 'en' ? 'none' : 'block');
+  const panel = document.querySelector('.bible-panel');
+  if (panel) {
+    panel.className = `bible-panel mode-${mode}`;
+  }
   const btn = document.getElementById('langToggle');
   if (btn) btn.textContent = LANG_LABELS[mode];
+}
+
+// ── Synchronised scrolling (side-by-side mode) ─────────────
+function syncScroll() {
+  const en = document.getElementById('textEn');
+  const pl = document.getElementById('textPl');
+  if (!en || !pl) return;
+
+  let syncing = false;
+
+  en.addEventListener('scroll', () => {
+    if (syncing || state.langMode !== 'side-by-side') return;
+    syncing = true;
+    pl.scrollTop = en.scrollTop;
+    syncing = false;
+  });
+
+  pl.addEventListener('scroll', () => {
+    if (syncing || state.langMode !== 'side-by-side') return;
+    syncing = true;
+    en.scrollTop = pl.scrollTop;
+    syncing = false;
+  });
 }
 
 // ── Initialise ────────────────────────────────────────────
 async function init() {
   initNav();
   applyLangMode(state.langMode);
+  syncScroll();
   document.getElementById('langToggle')?.addEventListener('click', () => {
     const idx = LANG_MODES.indexOf(state.langMode);
     applyLangMode(LANG_MODES[(idx + 1) % LANG_MODES.length]);
