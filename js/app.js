@@ -1,6 +1,7 @@
 import { CONFIG } from '../config.js';
-import { renderChapter } from './bible.js';
+import { renderChapter, loadFootnotes } from './bible.js';
 import { initNav, renderChapterGrid, BOOKS } from './nav.js';
+import { showStudyPanel, initTabs } from './ui.js';
 
 // ── Global state ─────────────────────────────────────────
 export const state = {
@@ -86,11 +87,20 @@ function attachVerseHandlers() {
 export function selectVerse(verseId) {
   if (!verseId) return;
   state.selectedVerseId = verseId;
+
+  // Highlight in both columns
   document.querySelectorAll('.verse').forEach(v =>
     v.classList.toggle('selected', v.dataset.verseId === verseId)
   );
-  // Study panel updates added in Patch 04
-  console.log('Selected verse:', verseId);
+
+  // Build human-readable label e.g. "John 1:1"
+  const [book, ch, v] = verseId.split('.');
+  const allBooks = [...BOOKS.OT, ...BOOKS.NT];
+  const bookName = allBooks.find(b => b.id === book)?.name || book;
+  const label = `${bookName} ${ch}:${v}`;
+
+  showStudyPanel(label);
+  loadFootnotes(verseId);
 }
 
 // ── Language toggle ───────────────────────────────────────
@@ -134,6 +144,7 @@ function syncScroll() {
 // ── Initialise ────────────────────────────────────────────
 async function init() {
   initNav();
+  initTabs();
   applyLangMode(state.langMode);
   syncScroll();
   document.getElementById('langToggle')?.addEventListener('click', () => {

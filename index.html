@@ -60,10 +60,53 @@
 
     <!-- Right: study panel -->
     <aside class="study-panel" id="studyPanel">
-      <div class="study-panel__empty">
+
+      <!-- Empty state — shown when no verse is selected -->
+      <div class="study-panel__empty" id="studyEmpty">
         <span class="study-panel__empty-icon">✝</span>
         <p>Select a verse to begin studying.</p>
       </div>
+
+      <!-- Active state — shown when a verse is selected -->
+      <div class="study-panel__active" id="studyActive" style="display:none; flex:1; display:none; flex-direction:column; height:100%;">
+
+        <!-- Selected verse reference badge -->
+        <div style="padding: 0.75rem 1rem; border-bottom: 1px solid var(--color-border); flex-shrink:0;">
+          <span class="verse-ref-pill" id="studyVerseRef">—</span>
+        </div>
+
+        <!-- Tab bar -->
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="footnotes">Notes</button>
+          <button class="tab-btn" data-tab="xref">References</button>
+          <button class="tab-btn" data-tab="ccc">Catechism</button>
+          <button class="tab-btn" data-tab="map">Map</button>
+          <button class="tab-btn" data-tab="ai">Ask AI</button>
+        </div>
+
+        <!-- Tab panes -->
+        <div class="tab-pane active" data-pane="footnotes" id="paneFootnotes">
+          <p class="placeholder-msg">Loading footnotes…</p>
+        </div>
+
+        <div class="tab-pane" data-pane="xref" id="paneXref">
+          <p class="placeholder-msg">Cross-references load in Patch 05.</p>
+        </div>
+
+        <div class="tab-pane" data-pane="ccc" id="paneCcc">
+          <p class="placeholder-msg">Catechism references load in Patch 06.</p>
+        </div>
+
+        <div class="tab-pane" data-pane="map" id="paneMap">
+          <p class="placeholder-msg">Map loads in Patch 07.</p>
+        </div>
+
+        <div class="tab-pane" data-pane="ai" id="paneAi">
+          <p class="placeholder-msg">Magisterium AI loads in Patch 08.</p>
+        </div>
+
+      </div>
+
     </aside>
 
   </div>
