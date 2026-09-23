@@ -6,7 +6,7 @@
 
 ## What this is
 
-A personal, static web app for studying the Catholic Bible. It runs entirely in the browser and deploys to GitHub Pages with no build step. The user reads in English (NABRE) and Polish (Biblia Tysiąclecia).
+A personal, static web app for studying the Catholic Bible. It runs entirely in the browser and deploys to GitHub Pages with no build step. The user reads in English (Christian Standard Bible — CSB; the free API.Bible tier does not offer a Catholic translation, so no deuterocanonical books are available). Polish support was removed; the app is English-only.
 
 ---
 
@@ -88,14 +88,11 @@ export const state = {
   book: 'JHN',          // current book (API.Bible book ID)
   chapter: 1,           // current chapter number
   selectedVerseId: null, // e.g. "JHN.1.1"
-  selectedVerseText: '', // plain text of selected verse (EN)
-  langMode: 'side-by-side', // 'en' | 'pl' | 'side-by-side'
+  selectedVerseText: '', // plain text of selected verse
   activeTab: 'footnotes',   // 'footnotes' | 'xref' | 'ccc' | 'map' | 'ai'
   mapInitialised: false,
 };
 ```
-
-Save `langMode` to `localStorage` whenever it changes. Restore it on load.
 
 ---
 
@@ -112,7 +109,6 @@ Save `langMode` to `localStorage` whenever it changes. Restore it on load.
   --color-accent:       #8b1a1a;
   --color-accent-hover: #6b1515;
   --color-highlight:    #fff3cd;
-  --color-pl-bg:        #f0f4ff;
 
   --font-serif: "EB Garamond", "Palatino Linotype", Georgia, serif;
   --font-sans:  system-ui, -apple-system, sans-serif;
@@ -132,8 +128,7 @@ Save `langMode` to `localStorage` whenever it changes. Restore it on load.
 ```js
 export const CONFIG = {
   BIBLE_API_KEY:       'YOUR_KEY',     // from api.bible
-  BIBLE_ID_EN:         'NABRE_ID',     // find via GET /v1/bibles, search "New American Bible"
-  BIBLE_ID_PL:         'BT_ID',        // find via GET /v1/bibles, search "Biblia Tysiąclecia"
+  BIBLE_ID_EN:         'CSB_ID',       // find via GET /v1/bibles, search "Christian Standard Bible"
   MAI_API_KEY:         'YOUR_KEY',     // from magisteriummagi.ai developer portal
   MAI_API_URL:         'https://api.magisteriummagi.ai/v1/', // verify from their docs
 };
@@ -144,7 +139,6 @@ export const CONFIG = {
 export const CONFIG = {
   BIBLE_API_KEY:  'GET_FROM_API.BIBLE',
   BIBLE_ID_EN:    'FIND_VIA_GET_BIBLES_ENDPOINT',
-  BIBLE_ID_PL:    'FIND_VIA_GET_BIBLES_ENDPOINT',
   MAI_API_KEY:    'GET_FROM_MAGISTERIUMMAGI.AI',
   MAI_API_URL:    'https://api.magisteriummagi.ai/v1/',
 };
@@ -157,9 +151,9 @@ export const CONFIG = {
 | Patch | What you can do after it |
 |-------|--------------------------|
 | 01 — Shell | See the layout skeleton in a browser |
-| 02 — Bible Reader | Navigate and read the Bible in English (NABRE) |
-| 03 — Polish | Read English and Polish side-by-side |
-| 04 — Footnotes | Click a verse and read its official NABRE footnotes |
+| 02 — Bible Reader | Navigate and read the Bible in English (CSB) |
+| 03 — Polish | Removed — the app is English-only |
+| 04 — Footnotes | Click a verse and read its footnotes (if the translation provides any) |
 | 05 — Cross-refs | Click a verse and see all cross-references; click one to navigate |
 | 06 — CCC | Click a verse and open its Catechism paragraphs on Vatican.va |
 | 07 — Map | See biblical places and named journeys on an interactive map |

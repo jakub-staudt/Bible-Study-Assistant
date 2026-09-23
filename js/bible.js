@@ -113,7 +113,7 @@ async function renderChapterContent(bibleId, bookId, chapterNum, containerEl) {
 
 // ── Footnotes ─────────────────────────────────────────────
 
-// Fetch a single verse with full content and footnotes (NABRE only)
+// Fetch a single verse with full content and footnotes
 export async function loadFootnotes(verseId) {
   const pane = document.getElementById('paneFootnotes');
   if (!pane) return;
@@ -188,7 +188,7 @@ function renderNoFootnotes(verseId) {
   const usccbUrl = buildUsccbUrl(book, ch, v);
   return `
     <p class="placeholder-msg" style="margin-bottom:1rem">
-      No NABRE footnotes for this verse.
+      No footnotes for this verse.
     </p>
     <a href="${usccbUrl}" target="_blank" rel="noopener" class="ref-link">
       Check USCCB for commentary ↗

@@ -11,14 +11,12 @@ export const state = {
   bookName:        'John',
   selectedVerseId:  null,
   selectedVerseText: '',
-  langMode:         localStorage.getItem('langMode') || 'side-by-side',
   activeTab:        'footnotes',
   mapInitialised:   false,
-  plAvailable:      CONFIG.BIBLE_ID_PL !== '',
 };
 
 // ── Navigation ───────────────────────────────────────────
-// Fetch and render a chapter in both EN and PL columns.
+// Fetch and render a chapter into the English text column.
 export async function navigate(bookId, chapterNum) {
   state.book    = bookId;
   state.chapter = chapterNum;
@@ -43,24 +41,11 @@ export async function navigate(bookId, chapterNum) {
   );
 
   const enContainer = document.getElementById('textEn')?.querySelector('.text-col__content');
-  const plContainer = document.getElementById('textPl')?.querySelector('.text-col__content');
-
-  const tasks = [];
 
   if (enContainer) {
-    tasks.push(renderChapter(CONFIG.BIBLE_ID_EN, bookId, chapterNum, enContainer));
+    await renderChapter(CONFIG.BIBLE_ID_EN, bookId, chapterNum, enContainer);
   }
 
-  if (plContainer && CONFIG.BIBLE_ID_PL) {
-    tasks.push(renderChapter(CONFIG.BIBLE_ID_PL, bookId, chapterNum, plContainer));
-  } else if (plContainer) {
-    plContainer.innerHTML = `<p class="placeholder-msg">
-      Biblia Tysiąclecia nie jest dostępna w tym planie API.<br>
-      <a href="https://biblia.deon.pl" target="_blank" class="ref-link">Otwórz biblia.deon.pl ↗</a>
-    </p>`;
-  }
-
-  await Promise.all(tasks); // Both load at the same time
   attachVerseHandlers();
 }
 
@@ -89,7 +74,7 @@ export function selectVerse(verseId) {
   if (!verseId) return;
   state.selectedVerseId = verseId;
 
-  // Highlight in both columns
+  // Highlight the selected verse
   document.querySelectorAll('.verse').forEach(v =>
     v.classList.toggle('selected', v.dataset.verseId === verseId)
   );
@@ -106,54 +91,10 @@ export function selectVerse(verseId) {
   loadCccRefs(verseId);
 }
 
-// ── Language toggle ───────────────────────────────────────
-const LANG_MODES = ['side-by-side', 'en', 'pl'];
-const LANG_LABELS = { 'side-by-side': 'EN | PL', 'en': 'EN', 'pl': 'PL' };
-
-function applyLangMode(mode) {
-  state.langMode = mode;
-  localStorage.setItem('langMode', mode);
-  const panel = document.querySelector('.bible-panel');
-  if (panel) {
-    panel.className = `bible-panel mode-${mode}`;
-  }
-  const btn = document.getElementById('langToggle');
-  if (btn) btn.textContent = LANG_LABELS[mode];
-}
-
-// ── Synchronised scrolling (side-by-side mode) ─────────────
-function syncScroll() {
-  const en = document.getElementById('textEn');
-  const pl = document.getElementById('textPl');
-  if (!en || !pl) return;
-
-  let syncing = false;
-
-  en.addEventListener('scroll', () => {
-    if (syncing || state.langMode !== 'side-by-side') return;
-    syncing = true;
-    pl.scrollTop = en.scrollTop;
-    syncing = false;
-  });
-
-  pl.addEventListener('scroll', () => {
-    if (syncing || state.langMode !== 'side-by-side') return;
-    syncing = true;
-    en.scrollTop = pl.scrollTop;
-    syncing = false;
-  });
-}
-
 // ── Initialise ────────────────────────────────────────────
 async function init() {
   initNav();
   initTabs();
-  applyLangMode(state.langMode);
-  syncScroll();
-  document.getElementById('langToggle')?.addEventListener('click', () => {
-    const idx = LANG_MODES.indexOf(state.langMode);
-    applyLangMode(LANG_MODES[(idx + 1) % LANG_MODES.length]);
-  });
   await navigate('JHN', 1); // Load John 1 on first open
 }
 

@@ -8,7 +8,6 @@
   --color-accent:       #8b1a1a;
   --color-accent-hover: #6b1515;
   --color-highlight:    #fff3cd;
-  --color-pl-bg:        #f0f4ff;
 
   --font-serif: "EB Garamond", "Palatino Linotype", Georgia, serif;
   --font-sans:  system-ui, -apple-system, sans-serif;
@@ -165,10 +164,6 @@ body {
   border-bottom: 2px solid var(--color-border);
 }
 
-.text-col--pl {
-  background: var(--color-pl-bg);
-}
-
 .text-col__lang-label {
   font-size: 0.72rem;
   font-weight: 700;
@@ -225,25 +220,6 @@ body {
 .placeholder-msg {
   color: var(--color-text-muted);
   font-style: italic;
-}
-
-/* Make the bible panel display side-by-side in side-by-side mode */
-.bible-panel.mode-side-by-side {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr;
-}
-
-.bible-panel.mode-side-by-side .text-col {
-  overflow-y: auto;
-  height: 100%;
-  border-right: 1px solid var(--color-border);
-  border-bottom: none;
-}
-
-.bible-panel.mode-en .text-col--pl,
-.bible-panel.mode-pl .text-col--en {
-  display: none;
 }
 
 /* Study panel */
