@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Catholic Bible Study</title>
+
+  <!-- Leaflet CSS (map, loaded early so tiles don't flash unstyled) -->
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+
+  <!-- Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap"
+    rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ── Top bar ───────────────────────────────────────── -->
+  <header class="top-bar">
+    <div class="top-bar__brand">✝ Catholic Bible Study</div>
+    <div class="top-bar__controls">
+      <button class="btn btn--ghost" id="langToggle" title="Toggle language">EN / PL</button>
+    </div>
+  </header>
+
+  <!-- ── Three-column layout ───────────────────────────── -->
+  <div class="layout">
+
+    <!-- Left: book + chapter navigation -->
+    <nav class="nav-panel" id="navPanel">
+      <div class="nav-panel__inner">
+        <p class="nav-panel__hint">Navigation loads in Patch 02.</p>
+      </div>
+    </nav>
+
+    <!-- Centre: Bible text -->
+    <main class="bible-panel" id="biblePanel">
+
+      <!-- English text column -->
+      <section class="text-col text-col--en" id="textEn">
+        <div class="text-col__lang-label">New American Bible (NABRE)</div>
+        <div class="text-col__content" id="verseListEn">
+          <p class="placeholder-msg">Bible text loads in Patch 02.</p>
+        </div>
+      </section>
+
+      <!-- Polish text column -->
+      <section class="text-col text-col--pl" id="textPl">
+        <div class="text-col__lang-label">Biblia Tysiąclecia</div>
+        <div class="text-col__content" id="verseListPl">
+          <p class="placeholder-msg">Tekst biblijny ładuje się w Łatce 03.</p>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Right: study panel -->
+    <aside class="study-panel" id="studyPanel">
+      <div class="study-panel__empty">
+        <span class="study-panel__empty-icon">✝</span>
+        <p>Select a verse to begin studying.</p>
+      </div>
+    </aside>
+
+  </div>
+
+  <!-- App entry point — added in Patch 02 -->
+  <!-- <script type="module" src="js/app.js"></script> -->
+
+</body>
+</html>
