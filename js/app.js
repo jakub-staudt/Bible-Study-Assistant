@@ -1,5 +1,4 @@
-import { CONFIG } from '../config.js';
-import { renderChapter, loadFootnotes } from './bible.js';
+import { renderChapter, loadFootnotes, getChapterCount } from './bible.js';
 import { initNav, renderChapterGrid, BOOKS } from './nav.js';
 import { showStudyPanel, initTabs } from './ui.js';
 import { loadXRefs, loadCccRefs } from './refs.js';
@@ -32,7 +31,7 @@ export async function navigate(bookId, chapterNum) {
     b.classList.toggle('active', b.dataset.book === bookId)
   );
 
-  // Update chapter grid — fetch chapter count from API
+  // Update chapter grid
   await updateChapterGrid(bookId);
 
   // Update chapter button highlight
@@ -43,7 +42,7 @@ export async function navigate(bookId, chapterNum) {
   const enContainer = document.getElementById('textEn')?.querySelector('.text-col__content');
 
   if (enContainer) {
-    await renderChapter(CONFIG.BIBLE_ID_EN, bookId, chapterNum, enContainer);
+    await renderChapter(bookId, chapterNum, enContainer);
   }
 
   attachVerseHandlers();
@@ -51,12 +50,7 @@ export async function navigate(bookId, chapterNum) {
 
 async function updateChapterGrid(bookId) {
   try {
-    const res = await fetch(
-      `https://api.scripture.api.bible/v1/bibles/${CONFIG.BIBLE_ID_EN}/books/${bookId}/chapters`,
-      { headers: { 'api-key': CONFIG.BIBLE_API_KEY } }
-    );
-    const data = await res.json();
-    const count = (data.data || []).filter(c => c.id !== `${bookId}.intro`).length;
+    const count = await getChapterCount(bookId);
     renderChapterGrid(count);
   } catch {
     renderChapterGrid(30); // fallback
