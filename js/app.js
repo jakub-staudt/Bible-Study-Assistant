@@ -2,7 +2,7 @@ import { CONFIG } from '../config.js';
 import { renderChapter, loadFootnotes } from './bible.js';
 import { initNav, renderChapterGrid, BOOKS } from './nav.js';
 import { showStudyPanel, initTabs } from './ui.js';
-import { loadXRefs } from './refs.js';
+import { loadXRefs, loadCccRefs } from './refs.js';
 
 // ── Global state ─────────────────────────────────────────
 export const state = {
@@ -103,6 +103,7 @@ export function selectVerse(verseId) {
   showStudyPanel(label);
   loadFootnotes(verseId);
   loadXRefs(verseId);
+  loadCccRefs(verseId);
 }
 
 // ── Language toggle ───────────────────────────────────────
